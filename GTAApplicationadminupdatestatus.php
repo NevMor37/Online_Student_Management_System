@@ -1,0 +1,67 @@
+<?php
+//session_start();
+//
+////connect to database
+//$db=mysqli_connect("localhost","root","hu1015","authentication");
+
+if (isset($_SERVER['HTTP_HOST']))
+{
+    if($_SERVER['HTTP_HOST'] == "localhost")
+    {
+        $root =  realpath($_SERVER["CONTEXT_DOCUMENT_ROOT"]);
+        define("ROOT",$root."/student/ogms/public_html");
+        $root = ROOT;
+    }
+    else
+    {
+        $root =  realpath($_SERVER["CONTEXT_DOCUMENT_ROOT"]);
+    }
+}
+else
+{
+    $root =  realpath($_SERVER["CONTEXT_DOCUMENT_ROOT"]);
+}
+session_start();
+$user_name = $_SESSION['user']['name'] ;
+$user_email = $_SESSION['user']['mail'] ;
+$user_pantherid = $_SESSION['user']['pid'] ;
+//include $root.'/authenticate.php';
+include($root.'/osms.dbconfig.inc');
+$error_message = "";
+$counter = 0;
+
+$mysqli = new mysqli($hostname,$username, $password,$dbname);
+
+/* check connection */
+if (mysqli_connect_errno()) {
+    printf("Connect failed: %s\n", mysqli_connect_error());
+    exit();
+}
+
+?>
+<?php
+$db=$mysqli;
+if(isset($_POST["id"]) && isset($_POST["operate"]))
+{
+    $output = '';
+    $id = $_POST["id"];
+    $operate = $_POST["operate"];
+
+    $sql = "update tbl_gaapplication set Status = '$operate'  where GAApplicationID=".$id ;
+    $result = mysqli_query($db,$sql);
+
+    if($result==1)
+    {
+        $output='success';
+    }
+    else
+    {
+        $output='fail';
+    }
+    //$output = 'id:' . $id.'operate:' . $operate;
+    //$output = 'id:' . $id;
+    echo $output;
+}
+
+
+?>
